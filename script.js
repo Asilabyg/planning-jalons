@@ -19,6 +19,9 @@ function loadTable() {
     const tbody = document.querySelector("#jalonsTable tbody");
     tbody.innerHTML = "";
 
+    // ✅ tri avant génération du tableau
+    jalons.sort((a, b) => new Date(a.date) - new Date(b.date));
+
     jalons.forEach(jalon => {
         const tr = document.createElement("tr");
 
@@ -33,10 +36,11 @@ function loadTable() {
             </td>
         `;
 
+        // ✅ couleur selon l'état du jalon
+        tr.style.backgroundColor = getStatusColor(jalon.date);
+
         tbody.appendChild(tr);
     });
-    tr.style.backgroundColor = getStatusColor(jalon.date);
-    jalons.sort((a, b) => new Date(a.date) - new Date(b.date));
 }
 
 function updateDate(id, newDate) {
@@ -82,4 +86,3 @@ function addJalon() {
 
 loadSavedData();
 loadTable();
-``
