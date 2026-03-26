@@ -19,7 +19,6 @@ function loadTable() {
     const tbody = document.querySelector("#jalonsTable tbody");
     tbody.innerHTML = "";
 
-    // ✅ tri avant génération du tableau
     jalons.sort((a, b) => new Date(a.date) - new Date(b.date));
 
     jalons.forEach(jalon => {
@@ -27,18 +26,20 @@ function loadTable() {
 
         tr.innerHTML = `
             <td>${jalon.nom}</td>
+            <td>${jalon.area}</td>
+            <td>${jalon.type}</td>
+            <td>${jalon.pic}</td>
             <td>
                 <input type="date" value="${jalon.date}" 
                     onchange="updateDate(${jalon.id}, this.value)">
             </td>
+            <td>${jalon.planning}</td>
             <td>
-                <button onclick="saveData()">💾 Sauvegarder</button>
+                <button onclick="saveData()">💾</button>
             </td>
         `;
 
-        // ✅ couleur selon l'état du jalon
         tr.style.backgroundColor = getStatusColor(jalon.date);
-
         tbody.appendChild(tr);
     });
 }
@@ -62,9 +63,13 @@ function loadSavedData() {
 
 function addJalon() {
     const name = document.getElementById("newName").value;
+    const area = document.getElementById("newArea").value;
+    const type = document.getElementById("newType").value;
+    const pic = document.getElementById("newPIC").value;
     const date = document.getElementById("newDate").value;
+    const planning = document.getElementById("newPlanning").value;
 
-    if (!name || !date) {
+    if (!name || !area || !type || !pic || !date || !planning) {
         alert("Merci de remplir tous les champs.");
         return;
     }
@@ -74,14 +79,17 @@ function addJalon() {
     jalons.push({
         id: newId,
         nom: name,
-        date: date
+        area: area,
+        type: type,
+        pic: pic,
+        date: date,
+        planning: planning
     });
 
     saveData();
     loadTable();
 
-    document.getElementById("newName").value = "";
-    document.getElementById("newDate").value = "";
+    document.querySelectorAll("#addForm input, #addForm select").forEach(el => el.value = "");
 }
 
 loadSavedData();

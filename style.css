@@ -24,3 +24,15 @@ th, td {
 input[type="date"] {
     padding: 5px;
 }
+
+#addForm {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+#addForm input, #addForm select {
+    padding: 8px;
+    font-size: 14px;
+}
