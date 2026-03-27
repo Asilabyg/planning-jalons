@@ -1,10 +1,10 @@
-// ✅ Adresse de ton backend
-// Quand ton backend sera sur Render, tu remplacerais par :
-// const API_URL = "https://ton-backend.onrender.com";
+// ✅ Backend Render
 const API_URL = "https://jalons-backend.onrender.com";
 
+let jalons = [];
+
 // ===============================
-// ✅ Charger les jalons depuis le backend
+// ✅ Charger jalons depuis backend
 // ===============================
 async function loadSavedData() {
     const res = await fetch(`${API_URL}/jalons`);
@@ -13,18 +13,17 @@ async function loadSavedData() {
 }
 
 // ===============================
-// ✅ Sauvegarder (ajouter) un jalon dans le backend
+// ✅ Ajouter un jalon (Planning date FIXE)
 // ===============================
-
 async function addJalon() {
-    const name = document.getElementById("newName").value;
-    const area = document.getElementById("newArea").value;
-    const type = document.getElementById("newType").value;
-    const pic = document.getElementById("newPIC").value;
-    const date = document.getElementById("newDate").value;
-    const planning = document.getElementById("newPlanning").value;
+    const name = newName.value;
+    const area = newArea.value;
+    const type = newType.value;
+    const pic = newPIC.value;
+    const planningDate = newPlanningDate.value;
+    const planning = newPlanning.value;
 
-    if (!name || !area || !type || !pic || !date || !planning) {
+    if (!name || !area || !type || !pic || !planningDate || !planning) {
         alert("Merci de remplir tous les champs.");
         return;
     }
@@ -32,92 +31,87 @@ async function addJalon() {
     const newJalon = {
         id: Date.now(),
         nom: name,
-        area: area,
-        type: type,
-        pic: pic,
-        date: date,
-        planning: planning
+        area,
+        type,
+        pic,
+        planningDate,             // ✅ FIXE à la création
+        currentForecast: planningDate, // ✅ Forecast initiale
+        forecastHistory: [planningDate],
+        planning
     };
 
-    // ✅ Envoyer au backend
     await fetch(`${API_URL}/jalons`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(newJalon)
     });
 
-    // ✅ Ajouter instantanément au tableau local
     jalons.push(newJalon);
-
-    // ✅ Afficher immédiatement dans l'interface (pas besoin de reload)
     loadTable();
 
-    // ✅ Effacer le formulaire
     document.querySelectorAll("#addForm input, #addForm select").forEach(el => el.value = "");
 }
 
-
 // ===============================
-// ✅ Mettre à jour un jalon (date)
+// ✅ Mettre à jour la forecast + historique
 // ===============================
-async function updateDate(id, newDate) {
+async function updateForecast(id, newDate) {
     const jalon = jalons.find(j => j.id === id);
-    jalon.date = newDate;
+
+    jalon.currentForecast = newDate;
+    jalon.forecastHistory.push(newDate);
 
     await fetch(`${API_URL}/jalons/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(jalon)
     });
 
-    loadSavedData();
+    loadTable();
+}
+
+// ===============================
+// ✅ Statut : cercle couleur
+// ===============================
+function getStatusColor(j) {
+    const p = new Date(j.planningDate);
+    const f = new Date(j.currentForecast);
+
+    if (f > p) return "#ff4d4d";     // Rouge = retard
+    if (f.getTime() === p.getTime()) return "#ffc107"; // Jaune = pile le même jour
+    return "#4caf50";                // Vert = en avance
 }
 
 // ===============================
 // ✅ Affichage du tableau
 // ===============================
-function getStatusColor(date) {
-    const today = new Date();
-    const d = new Date(date);
-    const diff = (d - today) / (1000 * 3600 * 24);
-
-    if (diff < 0) return "#ffb3b3";      // rouge
-    if (diff < 15) return "#ffe5b3";     // orange
-    return "#d6f5d6";                    // vert
-}
-
 function loadTable() {
     const tbody = document.querySelector("#jalonsTable tbody");
     tbody.innerHTML = "";
 
-    jalons.sort((a, b) => new Date(a.date) - new Date(b.date));
+    jalons.sort((a, b) => new Date(a.planningDate) - new Date(b.planningDate));
 
     jalons.forEach(jalon => {
         const tr = document.createElement("tr");
 
         tr.innerHTML = `
-            <td>${jalon.nom || ""}</td>
-            <td>${jalon.area || ""}</td>
-            <td>${jalon.type || ""}</td>
-            <td>${jalon.pic || ""}</td>
-            <td>
-                <input type="date" value="${jalon.date}"
-                       onchange="updateDate(${jalon.id}, this.value)">
-            </td>
-            <td>${jalon.planning || ""}</td>
-            <td>
-                <button onclick="loadSavedData()">💾</button>
-            </td>
-        `;
+            <td><div class="status-circle" style="background:${getStatusColor(jalon)}"></div></td>
+            <td>${jalon.nom}</td>
+            <td>${jalon.area}</td>
+            <td>${jalon.type}</td>
+            <td>${jalon.pic}</td>
+            <td>${jalon.planningDate}</td>
 
-        tr.style.backgroundColor = getStatusColor(jalon.date);
+            <td>
+                <input type="date" value="${jalon.currentForecast}"
+                       onchange="updateForecast(${jalon.id}, this.value)">
+            </td>
+
+            <td>${jalon.planning}</td>
+        `;
 
         tbody.appendChild(tr);
     });
 }
 
-// ===============================
-// ✅ Lancer au démarrage
-// ===============================
-let jalons = [];
 loadSavedData();
