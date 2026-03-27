@@ -1,3 +1,4 @@
+/* === STYLE GLOBAL === */
 body {
     font-family: Arial, sans-serif;
     margin: 40px;
@@ -25,6 +26,7 @@ input[type="date"] {
     padding: 5px;
 }
 
+/* === FORMULAIRE === */
 #addForm {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -37,9 +39,7 @@ input[type="date"] {
     font-size: 14px;
 }
 
-
 /* === PAGE D'ACCUEIL === */
-
 .homepage-container {
     text-align: center;
     margin-top: 70px;
@@ -71,9 +71,4 @@ input[type="date"] {
 
 .home-card h2 {
     margin-bottom: 15px;
-}
-
-body {
-    background: #f4f4f4;
-    font-family: Arial, sans-serif;
 }
