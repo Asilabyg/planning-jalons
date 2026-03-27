@@ -15,6 +15,7 @@ async function loadSavedData() {
 // ===============================
 // ✅ Sauvegarder (ajouter) un jalon dans le backend
 // ===============================
+
 async function addJalon() {
     const name = document.getElementById("newName").value;
     const area = document.getElementById("newArea").value;
@@ -29,7 +30,7 @@ async function addJalon() {
     }
 
     const newJalon = {
-        id: Date.now(),    // ✅ ID unique généré automatiquement
+        id: Date.now(),
         nom: name,
         area: area,
         type: type,
@@ -38,18 +39,23 @@ async function addJalon() {
         planning: planning
     };
 
+    // ✅ Envoyer au backend
     await fetch(`${API_URL}/jalons`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newJalon)
     });
 
-    // ✅ Recharge tableau
-    loadSavedData();
+    // ✅ Ajouter instantanément au tableau local
+    jalons.push(newJalon);
 
-    // ✅ Reset form
+    // ✅ Afficher immédiatement dans l'interface (pas besoin de reload)
+    loadTable();
+
+    // ✅ Effacer le formulaire
     document.querySelectorAll("#addForm input, #addForm select").forEach(el => el.value = "");
 }
+
 
 // ===============================
 // ✅ Mettre à jour un jalon (date)
