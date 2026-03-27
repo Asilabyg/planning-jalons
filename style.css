@@ -10,6 +10,20 @@ h1 {
     margin-bottom: 30px;
 }
 
+/* === FORMULAIRE === */
+#addForm {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+#addForm input, 
+#addForm select {
+    padding: 8px;
+    font-size: 14px;
+}
+
 /* === TABLEAU === */
 table {
     width: 100%;
@@ -27,23 +41,44 @@ input[type="date"] {
     padding: 5px;
 }
 
-/* === FORMULAIRE === */
-#addForm {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-#addForm input, #addForm select {
-    padding: 8px;
-    font-size: 14px;
-}
-
-/* === CERCLE DE STATUT === */
+/* === CERCLE STATUT === */
 .status-circle {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     margin: auto;
+}
+
+/* === PAGE D'ACCUEIL === */
+.homepage-container {
+    text-align: center;
+    margin-top: 70px;
+}
+
+.card-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 50px;
+}
+
+.home-card {
+    width: 260px;
+    height: 180px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: black;
+    padding: 25px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.home-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+}
+
+.home-card h2 {
+    margin-bottom: 15px;
 }
