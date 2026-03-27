@@ -1,67 +1,21 @@
-// Liste de jalons (tu pourras en ajouter plus tard)
-let jalons = [
-    { id: 1, nom: "Kick-off", date: "2026-04-15" },
-    { id: 2, nom: "Design Freeze", date: "2026-06-30" },
-    { id: 3, nom: "Fabrication Start", date: "2026-09-01" }
-];
+// ✅ Adresse de ton backend
+// Quand ton backend sera sur Render, tu remplacerais par :
+// const API_URL = "https://ton-backend.onrender.com";
+const API_URL = "https://jalons-backend.onrender.com";
 
-function getStatusColor(date) {
-    const today = new Date();
-    const d = new Date(date);
-    const diff = (d - today) / (1000 * 3600 * 24);
-
-    if (diff < 0) return "#ffb3b3";      // Rouge clair
-    if (diff < 15) return "#ffe5b3";     // Orange clair
-    return "#d6f5d6";                    // Vert clair
+// ===============================
+// ✅ Charger les jalons depuis le backend
+// ===============================
+async function loadSavedData() {
+    const res = await fetch(`${API_URL}/jalons`);
+    jalons = await res.json();
+    loadTable();
 }
 
-function loadTable() {
-    const tbody = document.querySelector("#jalonsTable tbody");
-    tbody.innerHTML = "";
-
-    jalons.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    jalons.forEach(jalon => {
-        const tr = document.createElement("tr");
-
-        tr.innerHTML = `
-            <td>${jalon.nom}</td>
-            <td>${jalon.area}</td>
-            <td>${jalon.type}</td>
-            <td>${jalon.pic}</td>
-            <td>
-                <input type="date" value="${jalon.date}" 
-                    onchange="updateDate(${jalon.id}, this.value)">
-            </td>
-            <td>${jalon.planning}</td>
-            <td>
-                <button onclick="saveData()">💾</button>
-            </td>
-        `;
-
-        tr.style.backgroundColor = getStatusColor(jalon.date);
-        tbody.appendChild(tr);
-    });
-}
-
-function updateDate(id, newDate) {
-    const jalon = jalons.find(j => j.id === id);
-    jalon.date = newDate;
-}
-
-function saveData() {
-    localStorage.setItem("jalons", JSON.stringify(jalons));
-    alert("Dates sauvegardées !");
-}
-
-function loadSavedData() {
-    const saved = localStorage.getItem("jalons");
-    if (saved) {
-        jalons = JSON.parse(saved);
-    }
-}
-
-function addJalon() {
+// ===============================
+// ✅ Sauvegarder (ajouter) un jalon dans le backend
+// ===============================
+async function addJalon() {
     const name = document.getElementById("newName").value;
     const area = document.getElementById("newArea").value;
     const type = document.getElementById("newType").value;
@@ -74,23 +28,90 @@ function addJalon() {
         return;
     }
 
-    const newId = Math.max(...jalons.map(j => j.id)) + 1;
-
-    jalons.push({
-        id: newId,
+    const newJalon = {
+        id: Date.now(),    // ✅ ID unique généré automatiquement
         nom: name,
         area: area,
         type: type,
         pic: pic,
         date: date,
         planning: planning
+    };
+
+    await fetch(`${API_URL}/jalons`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newJalon)
     });
 
-    saveData();
-    loadTable();
+    // ✅ Recharge tableau
+    loadSavedData();
 
+    // ✅ Reset form
     document.querySelectorAll("#addForm input, #addForm select").forEach(el => el.value = "");
 }
 
+// ===============================
+// ✅ Mettre à jour un jalon (date)
+// ===============================
+async function updateDate(id, newDate) {
+    const jalon = jalons.find(j => j.id === id);
+    jalon.date = newDate;
+
+    await fetch(`${API_URL}/jalons/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(jalon)
+    });
+
+    loadSavedData();
+}
+
+// ===============================
+// ✅ Affichage du tableau
+// ===============================
+function getStatusColor(date) {
+    const today = new Date();
+    const d = new Date(date);
+    const diff = (d - today) / (1000 * 3600 * 24);
+
+    if (diff < 0) return "#ffb3b3";      // rouge
+    if (diff < 15) return "#ffe5b3";     // orange
+    return "#d6f5d6";                    // vert
+}
+
+function loadTable() {
+    const tbody = document.querySelector("#jalonsTable tbody");
+    tbody.innerHTML = "";
+
+    jalons.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    jalons.forEach(jalon => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${jalon.nom || ""}</td>
+            <td>${jalon.area || ""}</td>
+            <td>${jalon.type || ""}</td>
+            <td>${jalon.pic || ""}</td>
+            <td>
+                <input type="date" value="${jalon.date}"
+                       onchange="updateDate(${jalon.id}, this.value)">
+            </td>
+            <td>${jalon.planning || ""}</td>
+            <td>
+                <button onclick="loadSavedData()">💾</button>
+            </td>
+        `;
+
+        tr.style.backgroundColor = getStatusColor(jalon.date);
+
+        tbody.appendChild(tr);
+    });
+}
+
+// ===============================
+// ✅ Lancer au démarrage
+// ===============================
+let jalons = [];
 loadSavedData();
-loadTable();
