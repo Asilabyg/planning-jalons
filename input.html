@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi Jalons Planning</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Suivi des Jalons</h1>
+    <h2>Ajouter un jalon</h2>
+    
+<div id="addForm">
+    <input id="newName" type="text" placeholder="Nom du jalon">
+
+    <input id="newArea" type="text" placeholder="Area Name">
+
+    <select id="newType">
+        <option value="">Type...</option>
+        <option value="Engineering">Engineering</option>
+        <option value="Procurement">Procurement</option>
+        <option value="Construction">Construction</option>
+        <option value="Commissioning">Commissioning</option>
+    </select>
+
+    <input id="newPIC" type="text" placeholder="Person In Charge">
+
+    <input id="newDate" type="date">
+
+    <input id="newPlanning" type="text" placeholder="Planning Name">
+
+    <button onclick="addJalon()">Ajouter le jalon</button>
+</div>
+
+
+
+    <table id="jalonsTable">
+        
+<thead>
+    <tr>
+        <th>Nom</th>
+        <th>Area</th>
+        <th>Type</th>
+        <th>PIC</th>
+        <th>Date prévisionnelle</th>
+        <th>Planning Name</th>
+        <th>Actions</th>
+    </tr>
+</thead>
+
+        <tbody>
+            <!-- Les lignes seront générées automatiquement par JavaScript -->
+        </tbody>
+    </table>
+
+    <script src="script.js"></script>
+</body>
+</html>
