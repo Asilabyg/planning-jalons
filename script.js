@@ -135,7 +135,7 @@ function formatDelayText(delayDays) {
         return `${absoluteDelay} jour(s) d'avance`;
     }
 
-    return `${absoluteDelay} jour(s) d'écart`;
+    return "Aucun écart";
 }
 
 function getSummary(jalons) {
@@ -463,7 +463,16 @@ function getFilteredAndSortedJalons() {
             case "forecastDesc":
                 return parseDate(second.currentForecast || second.planningDate) - parseDate(first.currentForecast || first.planningDate);
             case "nameAsc":
-                return (first.nom || "").localeCompare(second.nom || "", "fr", { sensitivity: "base" });
+                if (!first.nom && !second.nom) {
+                    return 0;
+                }
+                if (!first.nom) {
+                    return 1;
+                }
+                if (!second.nom) {
+                    return -1;
+                }
+                return first.nom.localeCompare(second.nom, "fr", { sensitivity: "base" });
             case "planningDateAsc":
             default:
                 return parseDate(first.planningDate) - parseDate(second.planningDate);
