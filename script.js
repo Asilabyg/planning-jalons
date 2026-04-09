@@ -52,6 +52,20 @@ function parseDate(value) {
     return value ? new Date(`${value}T00:00:00`) : null;
 }
 
+function isValidDate(value) {
+    const date = parseDate(value);
+    return Boolean(date) && !Number.isNaN(date.getTime());
+}
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#39;");
+}
+
 function formatDate(value) {
     if (!value) {
         return "—";
@@ -247,7 +261,7 @@ function validateForm(values) {
         return `Merci de renseigner ${missingFields.join(", ")}.`;
     }
 
-    if (!parseDate(values.currentForecast) || !parseDate(values.planningDate)) {
+    if (!isValidDate(values.currentForecast) || !isValidDate(values.planningDate)) {
         return "Les dates saisies sont invalides.";
     }
 
@@ -293,7 +307,7 @@ async function handleFormSubmit(event) {
                 body: updatedJalon
             });
 
-            showGlobalMessage("success", "Le jalon a été mis à jour.");
+            await loadSavedData("Le jalon a été mis à jour.");
         } else {
             const newJalon = {
                 id: Date.now(),
@@ -306,11 +320,10 @@ async function handleFormSubmit(event) {
                 body: newJalon
             });
 
-            showGlobalMessage("success", "Le jalon a été ajouté.");
+            await loadSavedData("Le jalon a été ajouté.");
         }
 
         resetForm();
-        await loadSavedData();
     } catch (error) {
         showMessage("formMessage", "error", "L'enregistrement a échoué. Vérifiez la disponibilité du backend puis réessayez.");
     } finally {
@@ -454,11 +467,11 @@ function renderHomePage() {
     highlights.innerHTML = `
         <article class="insight-card">
             <h3>Point d'attention principal</h3>
-            <p>${critical.length ? `${critical[0].nom} affiche ${getDelayDays(critical[0])} jour(s) de retard.` : "Aucun jalon en retard pour le moment."}</p>
+            <p>${critical.length ? `${escapeHtml(critical[0].nom)} affiche ${getDelayDays(critical[0])} jour(s) de retard.` : "Aucun jalon en retard pour le moment."}</p>
         </article>
         <article class="insight-card">
             <h3>Dernier jalon mouvant</h3>
-            <p>${latestForecastChange ? `${latestForecastChange.nom} a déjà connu ${latestForecastChange.forecastHistory.length - 1} évolution(s) de forecast.` : "Aucun historique de forecast multiple disponible."}</p>
+            <p>${latestForecastChange ? `${escapeHtml(latestForecastChange.nom)} a déjà connu ${latestForecastChange.forecastHistory.length - 1} évolution(s) de forecast.` : "Aucun historique de forecast multiple disponible."}</p>
         </article>
     `;
 }
@@ -488,15 +501,15 @@ function renderInputPage() {
         tr.innerHTML = `
             <td>${getStatusMarkup(jalon)}</td>
             <td>
-                <strong>${jalon.nom || "—"}</strong>
+                <strong>${escapeHtml(jalon.nom || "—")}</strong>
                 <div class="table-subtext">${Math.abs(getDelayDays(jalon))} jour(s) ${getDelayDays(jalon) > 0 ? "de retard" : getDelayDays(jalon) < 0 ? "d'avance" : "d'écart"}</div>
             </td>
-            <td>${jalon.area || "—"}</td>
-            <td>${jalon.type || "—"}</td>
-            <td>${jalon.pic || "—"}</td>
+            <td>${escapeHtml(jalon.area || "—")}</td>
+            <td>${escapeHtml(jalon.type || "—")}</td>
+            <td>${escapeHtml(jalon.pic || "—")}</td>
             <td>${formatDate(jalon.planningDate)}</td>
             <td>${formatDate(jalon.currentForecast || jalon.planningDate)}</td>
-            <td>${jalon.planning || "—"}</td>
+            <td>${escapeHtml(jalon.planning || "—")}</td>
             <td>
                 <div class="action-group">
                     <button class="button button-secondary" type="button" data-action="edit" data-id="${jalon.id}">Modifier</button>
@@ -547,7 +560,7 @@ function renderGroupList(targetId, groups) {
             ${groups.slice(0, 6).map((group) => `
                 <div class="list-item">
                     <div>
-                        <strong>${group.name}</strong>
+                        <strong>${escapeHtml(group.name)}</strong>
                         <div class="list-item-meta">${group.total} jalon(s)</div>
                     </div>
                     <span class="metric-pill">${group.late} retard(s)</span>
@@ -593,9 +606,9 @@ function renderVisualisationPage() {
         <article class="critical-item">
             <div class="status-badge">
                 <span class="status-dot status-late" aria-hidden="true"></span>
-                ${jalon.nom}
+                ${escapeHtml(jalon.nom)}
             </div>
-            <div class="list-item-meta">Area : ${jalon.area || "—"} · PIC : ${jalon.pic || "—"}</div>
+            <div class="list-item-meta">Area : ${escapeHtml(jalon.area || "—")} · PIC : ${escapeHtml(jalon.pic || "—")}</div>
             <div class="list-item-meta">Planning : ${formatDate(jalon.planningDate)} · Forecast : ${formatDate(jalon.currentForecast || jalon.planningDate)}</div>
             <span class="metric-pill">${getDelayDays(jalon)} jour(s) de retard</span>
         </article>
