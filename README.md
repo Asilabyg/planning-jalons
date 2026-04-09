@@ -8,7 +8,7 @@ Site web simple pour suivre des jalons projet, mettre à jour leurs forecasts et
 - `/visualisation.html` : indicateurs globaux, synthèses par catégorie et liste des jalons critiques.
 
 ## Données attendues
-Le frontend consomme un backend HTTP configuré dans `/home/runner/work/planning-jalons/planning-jalons/script.js` via `API_URL`.
+Le frontend consomme un backend HTTP configuré dans `script.js` via `API_URL`.
 
 Chaque jalon contient principalement :
 - `id`

@@ -170,6 +170,21 @@ function showGlobalMessage(type, message) {
     showMessage("globalMessage", type, message);
 }
 
+function getFilterKey(id) {
+    switch (id) {
+        case "filterSearch":
+            return "search";
+        case "filterType":
+            return "type";
+        case "filterStatus":
+            return "status";
+        case "sortBy":
+            return "sortBy";
+        default:
+            return "";
+    }
+}
+
 async function request(path, options = {}) {
     const config = {
         method: options.method || "GET",
@@ -215,18 +230,9 @@ async function loadSavedData(successMessage = "") {
 }
 
 function handleFilterChange(event) {
-    state.filters[event.target.id === "filterSearch" ? "search" : event.target.id.replace("filter", "").replace(/^./, (character) => character.toLowerCase())] = event.target.value;
-
-    if (event.target.id === "sortBy") {
-        state.filters.sortBy = event.target.value;
-    }
-
-    if (event.target.id === "filterType") {
-        state.filters.type = event.target.value;
-    }
-
-    if (event.target.id === "filterStatus") {
-        state.filters.status = event.target.value;
+    const filterKey = getFilterKey(event.target.id);
+    if (filterKey) {
+        state.filters[filterKey] = event.target.value;
     }
 
     renderInputPage();
