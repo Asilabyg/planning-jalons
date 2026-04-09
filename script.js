@@ -24,6 +24,7 @@ function bindEvents() {
         element("jalonForm")?.addEventListener("submit", handleFormSubmit);
         element("cancelEditButton")?.addEventListener("click", resetForm);
         element("refreshTableButton")?.addEventListener("click", () => loadSavedData("Tableau actualisé."));
+        document.querySelector("#jalonsTable tbody")?.addEventListener("click", handleTableAction);
 
         ["filterSearch", "filterType", "filterStatus", "sortBy"].forEach((id) => {
             const input = element(id);
@@ -267,7 +268,7 @@ function validateForm(values) {
         return `Merci de renseigner ${missingFields.join(", ")}.`;
     }
 
-    if (!isValidDate(values.currentForecast) || !isValidDate(values.planningDate)) {
+    if (!isValidDate(values.planningDate) || (values.currentForecast && !isValidDate(values.currentForecast))) {
         return "Les dates saisies sont invalides.";
     }
 
@@ -402,6 +403,22 @@ async function deleteJalon(id) {
     }
 }
 
+function handleTableAction(event) {
+    const actionButton = event.target.closest("button[data-action]");
+    if (!actionButton) {
+        return;
+    }
+
+    const jalonId = Number(actionButton.dataset.id);
+    if (actionButton.dataset.action === "edit") {
+        startEdit(jalonId);
+    }
+
+    if (actionButton.dataset.action === "delete") {
+        deleteJalon(jalonId);
+    }
+}
+
 function getFilteredAndSortedJalons() {
     const searchTerm = state.filters.search.trim().toLowerCase();
 
@@ -503,12 +520,13 @@ function renderInputPage() {
     tableMessage.textContent = `${jalons.length} jalon(s) affiché(s).`;
 
     jalons.forEach((jalon) => {
+        const delayDays = getDelayDays(jalon);
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>${getStatusMarkup(jalon)}</td>
             <td>
                 <strong>${escapeHtml(jalon.nom || "—")}</strong>
-                <div class="table-subtext">${Math.abs(getDelayDays(jalon))} jour(s) ${getDelayDays(jalon) > 0 ? "de retard" : getDelayDays(jalon) < 0 ? "d'avance" : "d'écart"}</div>
+                <div class="table-subtext">${Math.abs(delayDays)} jour(s) ${delayDays > 0 ? "de retard" : delayDays < 0 ? "d'avance" : "d'écart"}</div>
             </td>
             <td>${escapeHtml(jalon.area || "—")}</td>
             <td>${escapeHtml(jalon.type || "—")}</td>
@@ -524,14 +542,6 @@ function renderInputPage() {
             </td>
         `;
         tbody.appendChild(tr);
-    });
-
-    tbody.querySelectorAll("button[data-action='edit']").forEach((button) => {
-        button.addEventListener("click", () => startEdit(Number(button.dataset.id)));
-    });
-
-    tbody.querySelectorAll("button[data-action='delete']").forEach((button) => {
-        button.addEventListener("click", () => deleteJalon(Number(button.dataset.id)));
     });
 }
 
