@@ -50,7 +50,12 @@ function element(id) {
 }
 
 function parseDate(value) {
-    return value ? new Date(`${value}T00:00:00`) : null;
+    if (!value) {
+        return null;
+    }
+
+    const [year, month, day] = value.split("-").map(Number);
+    return new Date(year, month - 1, day);
 }
 
 function isValidDate(value) {
@@ -485,7 +490,7 @@ function renderHomePage() {
 
     const latestForecastChange = [...state.jalons]
         .filter((jalon) => Array.isArray(jalon.forecastHistory) && jalon.forecastHistory.length > 1)
-        .sort((first, second) => (second.forecastHistory?.length || 0) - (first.forecastHistory?.length || 0))[0];
+        .sort((first, second) => (second.forecastHistory?.length || 0) - (first.forecastHistory?.length || 0))[0] || null;
 
     highlights.innerHTML = `
         <article class="insight-card">

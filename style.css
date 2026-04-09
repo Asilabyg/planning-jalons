@@ -345,6 +345,8 @@ input::placeholder {
     overflow-x: auto;
     border: 1px solid var(--border);
     border-radius: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
 }
 
 .table-wrapper::-webkit-scrollbar {
