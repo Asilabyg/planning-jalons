@@ -6,26 +6,55 @@
     <title>Accueil - Suivi des Jalons</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
-<body>
-
-    <div class="homepage-container">
-        <h1>Suivi des Jalons</h1>
-
-        <div class="card-container">
-
-            <a class="home-card" href="input.html">
-                <h2>Entrée de données</h2>
-                <p>Ajouter ou modifier les jalons</p>
-            </a>
-
-            <a class="home-card" href="visualisation.html">
-                <h2>Visualisations</h2>
-                <p>Voir les jalons, graphiques et analyses</p>
-            </a>
-
+<body data-page="home">
+    <header class="site-header hero-header">
+        <div class="hero-shell">
+            <p class="eyebrow">Pilotage des jalons projet</p>
+            <h1>Suivez vos échéances, détectez les retards et partagez une vision claire.</h1>
+            <p class="hero-text">
+                Cette application centralise les jalons, facilite leur mise à jour et met en avant les points critiques pour aider les équipes à prioriser.
+            </p>
+            <div class="hero-actions">
+                <a class="button button-primary" href="input.html">Gérer les jalons</a>
+                <a class="button button-secondary" href="visualisation.html">Voir les indicateurs</a>
+            </div>
         </div>
-    </div>
+    </header>
 
+    <main class="page-shell">
+        <section class="panel panel-highlight" aria-labelledby="priorities-title">
+            <div class="panel-heading">
+                <div>
+                    <p class="section-kicker">Objectif principal</p>
+                    <h2 id="priorities-title">Deux parcours prioritaires</h2>
+                </div>
+            </div>
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <h3>Saisie rapide et fiable</h3>
+                    <p>Créer, modifier et supprimer un jalon avec validation, feedback utilisateur et état de chargement.</p>
+                </article>
+                <article class="feature-card">
+                    <h3>Lecture immédiate des risques</h3>
+                    <p>Identifier les retards, visualiser les agrégats et isoler les jalons critiques en quelques secondes.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="panel" aria-labelledby="overview-title">
+            <div class="panel-heading panel-heading-wrap">
+                <div>
+                    <p class="section-kicker">Aperçu en direct</p>
+                    <h2 id="overview-title">Vue rapide du portefeuille</h2>
+                </div>
+                <button id="refreshOverviewButton" class="button button-ghost" type="button">Actualiser</button>
+            </div>
+            <div id="globalMessage" class="feedback hidden" role="status" aria-live="polite"></div>
+            <div id="homeOverview" class="summary-grid" aria-live="polite"></div>
+            <div id="homeHighlights" class="insight-grid"></div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
 </body>
 </html>

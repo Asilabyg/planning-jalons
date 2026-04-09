@@ -6,53 +6,148 @@
     <title>Entrée des données</title>
     <link rel="stylesheet" href="style.css">
 </head>
+<body data-page="input">
+    <header class="site-header compact-header">
+        <div class="header-bar">
+            <div>
+                <p class="eyebrow">Administration</p>
+                <h1>Entrée des données</h1>
+            </div>
+            <nav class="header-actions" aria-label="Navigation principale">
+                <a class="button button-ghost" href="index.html">Accueil</a>
+                <a class="button button-secondary" href="visualisation.html">Visualisations</a>
+            </nav>
+        </div>
+    </header>
 
-<body>
+    <main class="page-shell page-stack">
+        <div id="globalMessage" class="feedback hidden" role="status" aria-live="polite"></div>
 
-    <h1>Entrée des données</h1>
-    <a href="index.html">⬅ Retour à l'accueil</a>
+        <section class="panel" aria-labelledby="form-title">
+            <div class="panel-heading">
+                <div>
+                    <p class="section-kicker">Formulaire</p>
+                    <h2 id="form-title">Créer ou modifier un jalon</h2>
+                </div>
+            </div>
 
-    <h2>Créer un jalon</h2>
+            <form id="jalonForm" class="form-grid" novalidate>
+                <div id="formMessage" class="feedback hidden form-grid-full" role="alert"></div>
 
-    <div id="addForm">
-        <input id="newName" type="text" placeholder="Nom du jalon">
-        <input id="newArea" type="text" placeholder="Area Name">
+                <div class="field-group">
+                    <label for="newName">Nom du jalon</label>
+                    <input id="newName" name="nom" type="text" autocomplete="off" required>
+                </div>
 
-        <select id="newType">
-            <option value="">Type...</option>
-            <option value="Engineering">Engineering</option>
-            <option value="Procurement">Procurement</option>
-            <option value="Construction">Construction</option>
-            <option value="Commissioning">Commissioning</option>
-        </select>
+                <div class="field-group">
+                    <label for="newArea">Area</label>
+                    <input id="newArea" name="area" type="text" autocomplete="off" required>
+                </div>
 
-        <input id="newPIC" type="text" placeholder="Person In Charge">
+                <div class="field-group">
+                    <label for="newType">Type</label>
+                    <select id="newType" name="type" required>
+                        <option value="">Sélectionner</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Procurement">Procurement</option>
+                        <option value="Construction">Construction</option>
+                        <option value="Commissioning">Commissioning</option>
+                    </select>
+                </div>
 
-        <input id="newPlanningDate" type="date" placeholder="Planning Date">
+                <div class="field-group">
+                    <label for="newPIC">Personne responsable (PIC)</label>
+                    <input id="newPIC" name="pic" type="text" autocomplete="off" required>
+                </div>
 
-        <input id="newPlanning" type="text" placeholder="Planning Name">
+                <div class="field-group">
+                    <label for="newPlanningDate">Date planning</label>
+                    <input id="newPlanningDate" name="planningDate" type="date" required>
+                </div>
 
-        <button onclick="addJalon()">Ajouter le jalon</button>
-    </div>
+                <div class="field-group">
+                    <label for="newForecastDate">Forecast actuelle</label>
+                    <input id="newForecastDate" name="currentForecast" type="date">
+                </div>
 
-    <table id="jalonsTable">
-        <thead>
-            <tr>
-                <th>Status</th>
-                <th>Nom</th>
-                <th>Area</th>
-                <th>Type</th>
-                <th>PIC</th>
-                <th>Planning Date</th>
-                <th>Forecast</th>
-                <th>Planning Name</th>
-            </tr>
-        </thead>
+                <div class="field-group field-group-wide">
+                    <label for="newPlanning">Nom du planning</label>
+                    <input id="newPlanning" name="planning" type="text" autocomplete="off" required>
+                </div>
 
-        <tbody>
-            <!-- Généré automatiquement -->
-        </tbody>
-    </table>
+                <div class="form-actions form-grid-full">
+                    <button id="submitButton" class="button button-primary" type="submit">Ajouter le jalon</button>
+                    <button id="cancelEditButton" class="button button-secondary hidden" type="button">Annuler la modification</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="panel" aria-labelledby="table-title">
+            <div class="panel-heading panel-heading-wrap">
+                <div>
+                    <p class="section-kicker">Recherche et tri</p>
+                    <h2 id="table-title">Liste des jalons</h2>
+                </div>
+                <button id="refreshTableButton" class="button button-ghost" type="button">Actualiser</button>
+            </div>
+
+            <div class="toolbar" aria-label="Filtres de la liste des jalons">
+                <div class="field-group">
+                    <label for="filterSearch">Recherche</label>
+                    <input id="filterSearch" type="search" placeholder="Nom, area, PIC ou planning">
+                </div>
+                <div class="field-group">
+                    <label for="filterType">Type</label>
+                    <select id="filterType">
+                        <option value="all">Tous</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Procurement">Procurement</option>
+                        <option value="Construction">Construction</option>
+                        <option value="Commissioning">Commissioning</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label for="filterStatus">Statut</label>
+                    <select id="filterStatus">
+                        <option value="all">Tous</option>
+                        <option value="late">En retard</option>
+                        <option value="ontime">À l'heure</option>
+                        <option value="ahead">En avance</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label for="sortBy">Trier par</label>
+                    <select id="sortBy">
+                        <option value="planningDateAsc">Planning date croissante</option>
+                        <option value="planningDateDesc">Planning date décroissante</option>
+                        <option value="forecastAsc">Forecast croissante</option>
+                        <option value="forecastDesc">Forecast décroissante</option>
+                        <option value="nameAsc">Nom A → Z</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="jalonsTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Statut</th>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Area</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">PIC</th>
+                            <th scope="col">Planning date</th>
+                            <th scope="col">Forecast</th>
+                            <th scope="col">Planning</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <p id="tableMessage" class="empty-state" aria-live="polite"></p>
+        </section>
+    </main>
 
     <script src="script.js"></script>
 </body>

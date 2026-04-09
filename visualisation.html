@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -7,15 +6,66 @@
     <title>Visualisations</title>
     <link rel="stylesheet" href="style.css">
 </head>
+<body data-page="visualisation">
+    <header class="site-header compact-header">
+        <div class="header-bar">
+            <div>
+                <p class="eyebrow">Analyse</p>
+                <h1>Visualisations</h1>
+            </div>
+            <nav class="header-actions" aria-label="Navigation principale">
+                <a class="button button-ghost" href="index.html">Accueil</a>
+                <a class="button button-secondary" href="input.html">Gérer les jalons</a>
+            </nav>
+        </div>
+    </header>
 
-<body>
+    <main class="page-shell page-stack">
+        <section class="panel" aria-labelledby="overview-visual-title">
+            <div class="panel-heading panel-heading-wrap">
+                <div>
+                    <p class="section-kicker">KPI</p>
+                    <h2 id="overview-visual-title">Vue d'ensemble</h2>
+                </div>
+                <button id="refreshVisualsButton" class="button button-ghost" type="button">Actualiser</button>
+            </div>
+            <div id="globalMessage" class="feedback hidden" role="status" aria-live="polite"></div>
+            <div id="overviewStats" class="summary-grid" aria-live="polite"></div>
+        </section>
 
-    <h1>Visualisations</h1>
-    <a href="index.html">⬅ Retour à l'accueil</a>
+        <section class="panel" aria-labelledby="summary-title">
+            <div class="panel-heading">
+                <div>
+                    <p class="section-kicker">Synthèses</p>
+                    <h2 id="summary-title">Répartition des jalons</h2>
+                </div>
+            </div>
+            <div class="insight-grid">
+                <article class="summary-panel">
+                    <h3>Par area</h3>
+                    <div id="summaryByArea"></div>
+                </article>
+                <article class="summary-panel">
+                    <h3>Par type</h3>
+                    <div id="summaryByType"></div>
+                </article>
+                <article class="summary-panel">
+                    <h3>Par planning</h3>
+                    <div id="summaryByPlanning"></div>
+                </article>
+            </div>
+        </section>
 
-    <div id="visuContainer">
-        <p>Les visualisations seront ajoutées ici (graphiques, statistiques...)</p>
-    </div>
+        <section class="panel" aria-labelledby="critical-title">
+            <div class="panel-heading">
+                <div>
+                    <p class="section-kicker">Priorités</p>
+                    <h2 id="critical-title">Jalons critiques</h2>
+                </div>
+            </div>
+            <div id="criticalList"></div>
+        </section>
+    </main>
 
     <script src="script.js"></script>
 </body>
