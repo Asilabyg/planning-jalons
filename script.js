@@ -124,6 +124,20 @@ function getStatusMarkup(jalon) {
     `;
 }
 
+function formatDelayText(delayDays) {
+    const absoluteDelay = Math.abs(delayDays);
+
+    if (delayDays > 0) {
+        return `${absoluteDelay} jour(s) de retard`;
+    }
+
+    if (delayDays < 0) {
+        return `${absoluteDelay} jour(s) d'avance`;
+    }
+
+    return `${absoluteDelay} jour(s) d'écart`;
+}
+
 function getSummary(jalons) {
     return jalons.reduce((summary, jalon) => {
         const status = getStatus(jalon);
@@ -495,7 +509,7 @@ function renderHomePage() {
     highlights.innerHTML = `
         <article class="insight-card">
             <h3>Point d'attention principal</h3>
-            <p>${critical.length ? `${escapeHtml(critical[0].nom)} affiche ${getDelayDays(critical[0])} jour(s) de retard.` : "Aucun jalon en retard pour le moment."}</p>
+            <p>${critical.length && getDelayDays(critical[0]) > 0 ? `${escapeHtml(critical[0].nom)} affiche ${formatDelayText(getDelayDays(critical[0]))}.` : "Aucun jalon en retard pour le moment."}</p>
         </article>
         <article class="insight-card">
             <h3>Dernier jalon mouvant</h3>
@@ -531,7 +545,7 @@ function renderInputPage() {
             <td>${getStatusMarkup(jalon)}</td>
             <td>
                 <strong>${escapeHtml(jalon.nom || "—")}</strong>
-                <div class="table-subtext">${Math.abs(delayDays)} jour(s) ${delayDays > 0 ? "de retard" : delayDays < 0 ? "d'avance" : "d'écart"}</div>
+                <div class="table-subtext">${formatDelayText(delayDays)}</div>
             </td>
             <td>${escapeHtml(jalon.area || "—")}</td>
             <td>${escapeHtml(jalon.type || "—")}</td>
@@ -631,7 +645,7 @@ function renderVisualisationPage() {
             </div>
             <div class="list-item-meta">Area : ${escapeHtml(jalon.area || "—")} · PIC : ${escapeHtml(jalon.pic || "—")}</div>
             <div class="list-item-meta">Planning : ${formatDate(jalon.planningDate)} · Forecast : ${formatDate(jalon.currentForecast || jalon.planningDate)}</div>
-            <span class="metric-pill">${getDelayDays(jalon)} jour(s) de retard</span>
+            <span class="metric-pill">${formatDelayText(getDelayDays(jalon))}</span>
         </article>
     `).join("");
 }
